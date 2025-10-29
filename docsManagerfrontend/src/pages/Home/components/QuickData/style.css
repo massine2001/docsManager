@@ -1,0 +1,53 @@
+.quickData {
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    font-family: 'Inter', sans-serif;
+    color: #333;
+    font-size: 1rem;
+}
+
+.quickData h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* exactement 2 colonnes */
+    gap: 1rem;
+}
+
+
+.statCard {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+}
+
+.statCard:hover {
+    transform: translateY(-2px);
+}
+
+.icon {
+    font-size: 1.5rem;
+    margin-right: 0.75rem;
+}
+
+.label {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.value {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}

@@ -1,0 +1,139 @@
+﻿.pool-dashboard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin: 0.5rem;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .pool-dashboard {
+    margin: 0.2rem;
+  }
+}
+
+.pool-dashboard__header {
+  padding: 0.5rem;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.pool-dashboard__title {
+  margin: 0;
+  font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: #222;
+}
+
+.pool-dashboard__description {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+.pool-dashboard__tabs {
+  display: flex;
+  background-color: rgb(234, 234, 234);
+  border-bottom: 1px solid #000;
+}
+@media (max-width: 768px) {
+  .pool-dashboard__tabs {
+    flex-wrap: wrap;
+  }
+}
+
+.pool-dashboard__tab {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #222;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  border-bottom: 2px solid transparent;
+}
+
+.pool-dashboard__tab:hover {
+  background-color: #e5e5e5;
+  color: #007bff;
+}
+
+.pool-dashboard__tab--active {
+  color: #0056b3;
+  border-bottom-color: #0056b3;
+  font-weight: 600;
+}
+
+.pool-dashboard__content {
+  flex: 1;
+  padding: 0.75rem;
+  overflow-y: auto;
+}
+@media (max-width: 768px) {
+  .pool-dashboard__content {
+    padding: 0.5rem 0;
+  }
+}
+
+
+.pool-dashboard__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 300px;
+  color: #999;
+}
+
+.pool-dashboard__empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.pool-dashboard__empty-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #666;
+}
+
+/* Transition state when switching pools */
+.pool-dashboard__transition {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 300px;
+  color: #666;
+}
+
+.pool-dashboard__transition-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.pool-dashboard__transition p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
