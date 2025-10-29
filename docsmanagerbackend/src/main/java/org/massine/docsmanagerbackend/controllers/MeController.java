@@ -22,7 +22,6 @@ public class MeController {
 
     @GetMapping("/me")
     public Map<String, Object> me(@AuthenticationPrincipal Jwt jwt) {
-        System.out.print("ME CONTROLLER JWT: " + jwt.getSubject() + "\n" + jwt.getClaims().toString() + "\n" );
         var u = users.upsertFromJwt(jwt);
         return Map.of(
                 "sub", jwt.getSubject(),

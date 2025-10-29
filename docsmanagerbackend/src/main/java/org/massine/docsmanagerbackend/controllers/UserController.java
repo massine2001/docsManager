@@ -82,10 +82,8 @@ public class UserController {
 
     @PostMapping("/")
     public ResponseEntity<User> createUser(@RequestBody User user) {
-        System.out.println("Current user chiiiiii: " + user);
 
         User u = currentUser.get();
-        System.out.println("Current user chiiiiii: " + u);
         if (!currentUser.isAdmin()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }

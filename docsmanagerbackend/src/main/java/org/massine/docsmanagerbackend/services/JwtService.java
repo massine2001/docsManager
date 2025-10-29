@@ -34,8 +34,6 @@ public class JwtService {
         String jti = UUID.randomUUID().toString();
         Date now = new Date();
         Date exp = new Date(now.getTime() + invitationTtl.toMillis());
-        System.out.println("[JWT GEN] now=" + now + " exp=" + exp + " ttl=" + invitationTtl);
-        System.out.println("[JWT GEN] secret=" + secretB64.substring(0, Math.min(secretB64.length(), 10)) + "...");
 
         JwtBuilder b = Jwts.builder()
                 .setIssuedAt(now)
@@ -51,22 +49,18 @@ public class JwtService {
         }
 
         String token = b.signWith(key(), SignatureAlgorithm.HS256).compact();
-        System.out.println("[JWT GEN] token=" + token);
         return token;
     }
 
     public Claims validateToken(String token) {
-        System.out.println("[JWT VALIDATE] secret=" + secretB64.substring(0, Math.min(secretB64.length(), 10)) + "...");
         try {
             Claims c = Jwts.parserBuilder()
                     .setSigningKey(key())
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            System.out.println("[JWT VALIDATE] exp=" + c.getExpiration() + " now=" + new Date());
             return c;
         } catch (ExpiredJwtException e) {
-            System.out.println("[JWT VALIDATE] Expired: exp=" + e.getClaims().getExpiration() + " now=" + new Date());
             throw e;
         } catch (JwtException e) {
             e.printStackTrace();

@@ -6,20 +6,18 @@ import org.massine.docsmanagerbackend.dto.AcceptInvitationRequest;
 import org.massine.docsmanagerbackend.models.Access;
 import org.massine.docsmanagerbackend.models.File;
 import org.massine.docsmanagerbackend.models.Pool;
+import org.massine.docsmanagerbackend.models.User;
 import org.massine.docsmanagerbackend.repositories.AccessRepository;
-import org.massine.docsmanagerbackend.services.FileService;
-import org.massine.docsmanagerbackend.services.JwtService;
-import org.massine.docsmanagerbackend.services.PoolService;
-import org.massine.docsmanagerbackend.services.UserService;
+import org.massine.docsmanagerbackend.services.*;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -33,19 +31,20 @@ public class PublicController {
     private final UserService userService;
     private final AccessRepository accessRepository;
     private final JwtService jwtService;
+    private final AccessService accessService;
 
-    public PublicController(PoolService poolService, FileService fileService, UserService userService, AccessRepository accessRepository, JwtService jwtService) {
+    public PublicController(PoolService poolService, FileService fileService, UserService userService, AccessRepository accessRepository, JwtService jwtService, AccessService accessService) {
         this.poolService = poolService;
         this.fileService = fileService;
         this.userService = userService;
         this.accessRepository = accessRepository;
         this.jwtService = jwtService;
+        this.accessService = accessService;
     }
 
 
     @GetMapping("/pools")
     public ResponseEntity<List<Map<String, Object>>> getPublicPools() {
-        System.out.println("Fetching public pools...");
         List<Pool> publicPools = poolService.getAllPools().stream()
                 .filter(pool -> pool.getPublicAccess() != null && pool.getPublicAccess())
                 .collect(Collectors.toList());
@@ -309,4 +308,107 @@ public class PublicController {
         if (value instanceof Number n) return n.intValue();
         return null;
     }
+
+    @GetMapping("/demopoolstats")
+    public ResponseEntity<Map<String, Object>> getPublicPool14Stats() {
+        final int poolId = 14;
+        Pool pool = poolService.getPoolById(poolId);
+        if (pool == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("pool", pool);
+
+        List<User> members = accessService.getUsersFromPool(poolId);
+        List<Access> accesses = accessService.getAccessesByPool(poolId);
+        List<File> files = fileService.findByPoolId(poolId);
+
+        stats.put("membersCount", members.size());
+        stats.put("members", members);
+        stats.put("accesses", accesses);
+
+        Map<String, Long> roleDistribution = accesses.stream()
+                .filter(a -> a.getRole() != null)
+                .collect(Collectors.groupingBy(Access::getRole, Collectors.counting()));
+        stats.put("roleDistribution", roleDistribution);
+
+        Map<String, Long> userRoleDistribution = members.stream()
+                .filter(u -> u.getRole() != null)
+                .collect(Collectors.groupingBy(User::getRole, Collectors.counting()));
+        stats.put("userRoleDistribution", userRoleDistribution);
+
+        stats.put("filesCount", files.size());
+        stats.put("files", files);
+
+        Map<User, Long> uploaderStats = files.stream()
+                .filter(f -> f.getUserUploader() != null)
+                .collect(Collectors.groupingBy(File::getUserUploader, Collectors.counting()));
+        List<Map.Entry<User, Long>> topUploaders = uploaderStats.entrySet().stream()
+                .sorted(Map.Entry.<User, Long>comparingByValue().reversed())
+                .limit(5)
+                .collect(Collectors.toList());
+        stats.put("topUploaders", topUploaders);
+
+        Map<String, Long> filesPerDay = files.stream()
+                .filter(f -> f.getCreatedAt() != null)
+                .collect(Collectors.groupingBy(
+                        f -> f.getCreatedAt().toString().substring(0, 10),
+                        Collectors.counting()
+                ));
+        stats.put("filesPerDay", filesPerDay);
+
+        Optional<File> lastFile = files.stream()
+                .filter(f -> f.getCreatedAt() != null)
+                .max(Comparator.comparing(File::getCreatedAt));
+        stats.put("lastFile", lastFile.orElse(null));
+
+        List<User> inactiveMembers = members.stream()
+                .filter(u -> files.stream().noneMatch(f ->
+                        f.getUserUploader() != null && f.getUserUploader().getId().equals(u.getId())))
+                .collect(Collectors.toList());
+        stats.put("inactiveMembers", inactiveMembers);
+        stats.put("inactiveMembersCount", inactiveMembers.size());
+
+        stats.put("poolCreatedAt", pool.getCreatedAt());
+        long poolAgeInDays = 0;
+        if (pool.getCreatedAt() != null) {
+            poolAgeInDays = ChronoUnit.DAYS.between(pool.getCreatedAt(), Instant.now());
+        }
+        stats.put("poolAgeInDays", poolAgeInDays);
+
+        Optional<User> newestMember = members.stream()
+                .filter(u -> u.getCreatedAt() != null)
+                .max(Comparator.comparing(User::getCreatedAt));
+        Optional<User> oldestMember = members.stream()
+                .filter(u -> u.getCreatedAt() != null)
+                .min(Comparator.comparing(User::getCreatedAt));
+        stats.put("newestMember", newestMember.orElse(null));
+        stats.put("oldestMember", oldestMember.orElse(null));
+
+        double avgFilesPerMember = members.isEmpty() ? 0 : (double) files.size() / members.size();
+        stats.put("avgFilesPerMember", Math.round(avgFilesPerMember * 100.0) / 100.0);
+
+        double activityRate = members.isEmpty() ? 0 :
+                ((double) (members.size() - inactiveMembers.size()) / members.size() * 100);
+        stats.put("activityRate", Math.round(activityRate * 100.0) / 100.0);
+
+        Map<String, Long> fileExtensions = files.stream()
+                .filter(f -> f.getName() != null)
+                .map(f -> {
+                    String name = f.getName();
+                    int lastDot = name.lastIndexOf('.');
+                    return lastDot > 0 ? name.substring(lastDot + 1).toLowerCase() : "sans extension";
+                })
+                .collect(Collectors.groupingBy(ext -> ext, Collectors.counting()));
+        stats.put("fileExtensions", fileExtensions);
+
+        if (pool.getCreatedBy() != null) {
+            User creator = userService.findById(pool.getCreatedBy());
+            stats.put("creator", creator);
+        }
+
+        return ResponseEntity.ok(stats);
+    }
+
 }
