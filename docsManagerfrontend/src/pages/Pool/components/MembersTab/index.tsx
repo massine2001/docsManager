@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useFetch } from "../../../../hooks/useFetch";
 import { useMutation } from "../../../../hooks/useMutation";
 import { useToast } from "../../../../hooks/useToast";
-import { fetchPoolStats, fetchDemoPoolStats } from "../../../../api/poolPageApi";
+import { fetchPoolStats } from "../../../../api/poolPageApi";
 import { useAuth } from "../../../../hooks/useAuth";
 import { addMemberToPool, removeMemberFromPool, updateMemberRole } from "../../../../api/poolPageApi";
 import type { User } from "../../../../types/models";
@@ -14,6 +14,7 @@ import { ChangeRoleModal } from "./components/ChangeRoleModal";
 import { RemoveMemberModal } from "./components/RemoveMemberModal";
 import { useFilteredMembers } from "./hooks/useFilteredMembers";
 import "./style.css";
+import { fetchDemoPoolStats } from "../../../../api/publicPoolsApi";
 
 type Props = {
   poolId: number;

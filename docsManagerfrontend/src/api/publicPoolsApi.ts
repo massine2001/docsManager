@@ -1,5 +1,5 @@
 import axiosClient from './axiosClient';
-import type { Pool, File } from '../types/models';
+import type { Pool, File, PoolStats } from '../types/models';
 
 
 export const fetchPublicPools = async (): Promise<Pool[]> => {
@@ -24,6 +24,18 @@ export const fetchPublicPoolById = async (poolId: number): Promise<Pool | null> 
     return null;
   }
 };
+
+export const fetchDemoPoolStats = async () =>
+  {
+    try {const response = await axiosClient.get<PoolStats>(`/public/demopoolstats`, {
+      withCredentials: true
+    });
+    return response.data;}
+    catch (error) {
+      return null;
+    }
+  }
+
 
 
 export const fetchPublicPoolFiles = async (poolId: number): Promise<File[]> => {
