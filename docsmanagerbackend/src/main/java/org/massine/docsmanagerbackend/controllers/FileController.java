@@ -74,7 +74,7 @@ public class FileController {
         return ResponseEntity.ok(fileService.getFilesCount());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id:\\d+}")
     public ResponseEntity<File> getById(@PathVariable int id) {
         User u = currentUser.get();
 
@@ -91,7 +91,7 @@ public class FileController {
         return ResponseEntity.ok(file);
     }
 
-    @GetMapping("/uploader/{id}")
+    @GetMapping("/uploader/{id:\\d+}")
     public ResponseEntity<User> getUploader(@PathVariable int id) {
         User u = currentUser.get();
 
@@ -115,7 +115,7 @@ public class FileController {
     }
 
 
-    @GetMapping("/pool/{id}")
+    @GetMapping("/pool/{id:\\d+}")
     public ResponseEntity<Pool> getPool(@PathVariable int id) {
         User u = currentUser.get();
 
@@ -137,7 +137,7 @@ public class FileController {
         return ResponseEntity.ok(pool);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id:\\d+}")
     public ResponseEntity<File> updateFile(
             @PathVariable int id,
             @RequestParam(value = "file", required = false) MultipartFile newContent,
@@ -200,7 +200,7 @@ public class FileController {
     }
 
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id:\\d+}")
     public ResponseEntity<Void> deleteFile(@PathVariable int id) {
         User u = currentUser.get();
 
@@ -228,6 +228,11 @@ public class FileController {
         return ResponseEntity.noContent().build();
     }
 
+
+    @GetMapping("/upload")
+    public ResponseEntity<Void> noGetUpload() {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).build();
+    }
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadFile(
