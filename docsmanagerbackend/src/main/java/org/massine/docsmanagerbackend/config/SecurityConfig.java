@@ -46,6 +46,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/pools/public").permitAll()
                         .requestMatchers("/api/pools/*/public").permitAll()
                         .requestMatchers("/api/files/pool/*/public").permitAll()
+                        .requestMatchers("/public/demopoolstats").permitAll()
                         .requestMatchers("/api/files/download/*/public").permitAll()
                         .requestMatchers("/api/files/preview/*/public").permitAll()
                         .requestMatchers("/public/**").permitAll()

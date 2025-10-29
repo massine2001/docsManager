@@ -251,7 +251,7 @@ public class PublicController {
         }
     }
 
-    @PostMapping("/public/invitations/accept")
+    @PostMapping("/invitations/accept")
     public ResponseEntity<?> acceptInvitation(@RequestBody AcceptInvitationRequest request,
                                               @AuthenticationPrincipal Jwt jwt) {
         if (jwt == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
