@@ -23,6 +23,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -281,11 +282,15 @@ public class FileController {
 
             File persisted = fileService.saveFile(savedFile);
             return ResponseEntity.status(HttpStatus.CREATED).body(persisted);
-        } catch (DateTimeParseException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+         Logger log = LoggerFactory.getLogger(FileController.class);
+         String fn = (file != null ? file.getOriginalFilename() : "null");
+         long sz = (file != null ? file.getSize() : -1);
+         log.error("Upload failed: poolId={}, filename={}, size={}, baseDir={}",
+                 poolId, fn, sz, sftpConfig.normalizedBaseDir(), e);
+         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                 .body((File) Map.of("error","UPLOAD_FAILED","detail", e.getMessage()));
+     }
     }
 
 

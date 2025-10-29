@@ -86,18 +86,49 @@ public class FileService {
         ch.connect();
         return ch;
     }
+    public void uploadToDir(String remoteDir, String filename, InputStream data) throws Exception {
+        Session session = null;
+        ChannelSftp sftp = null;
+        try (InputStream in = data) {
+            session = getSession();
+            sftp = openSftp(session);
 
-    public void ensureDirectory(ChannelSftp sftp, String absoluteDir) throws SftpException {
-        String[] parts = absoluteDir.split("/");
-        String path = "";
-        for (String p : parts) {
-            if (p == null || p.isBlank()) continue;
-            path += "/" + p;
+            String absDir = normaliseAbs(remoteDir);
+            ensureDirectoryStrict(sftp, absDir);
+            sftp.cd(absDir);
+
+            sftp.put(in, filename);
+        } catch (SftpException se) {
+            throw new RuntimeException("SFTP_ERROR dir="+remoteDir+" file="+filename+" host="+sftpConfig.getHost()+":"+sftpConfig.getPort(), se);
+        } finally {
+            if (sftp != null) sftp.disconnect();
+            returnSession(session);
+        }
+    }
+
+    private String normaliseAbs(String p) {
+        if (p == null || p.isBlank()) return sftpConfig.normalizedBaseDir();
+        String out = p.replaceAll("/{2,}","/").trim();
+        if (!out.startsWith("/")) out = "/" + out;
+        String base = sftpConfig.normalizedBaseDir();
+        return out.startsWith(base) ? out : (base + (out.equals("/") ? "" : out));
+    }
+
+    public void ensureDirectoryStrict(ChannelSftp sftp, String absoluteDir) throws SftpException {
+        String[] parts = absoluteDir.replaceAll("/{2,}","/").split("/");
+        String cur = "";
+        for (String part : parts) {
+            if (part == null || part.isBlank()) continue;
+            cur += "/" + part;
             try {
-                sftp.cd(path);
+                sftp.cd(cur);
             } catch (SftpException e) {
-                sftp.mkdir(path);
-                sftp.cd(path);
+                if (e.id == ChannelSftp.SSH_FX_NO_SUCH_FILE) {
+                    sftp.mkdir(cur);
+                    sftp.cd(cur);
+                } else {
+                    throw e;
+                }
             }
         }
     }
@@ -111,7 +142,7 @@ public class FileService {
         
         cleaned = cleaned.replaceAll("[^a-zA-Z0-9._\\-\\s]", "_");
         
-        cleaned = cleaned.replaceAll("\\.{2,}", ".");  // Remplacer .. par .
+        cleaned = cleaned.replaceAll("\\.{2,}", ".");
         cleaned = cleaned.trim();
         
         if (cleaned.isEmpty() || cleaned.matches("^\\.+$")) {
@@ -133,29 +164,6 @@ public class FileService {
         return cleaned;
     }
 
-    public void uploadToDir(String remoteDir, String filename, InputStream data) throws Exception {
-        long startTime = System.currentTimeMillis();
-        Session session = null;
-        ChannelSftp sftp = null;
-        try (InputStream in = data) {
-            long sessionStart = System.currentTimeMillis();
-            session = getSession();
-
-            long sftpStart = System.currentTimeMillis();
-            sftp = openSftp(session);
-
-            long dirStart = System.currentTimeMillis();
-            ensureDirectory(sftp, remoteDir);
-
-            sftp.cd(remoteDir);
-
-            long putStart = System.currentTimeMillis();
-            sftp.put(in, filename);
-        } finally {
-            if (sftp != null) sftp.disconnect();
-            returnSession(session);
-        }
-    }
 
     public void deleteRemote(String remotePath) throws Exception {
         Session session = null;
@@ -215,25 +223,17 @@ public class FileService {
     }
 
     private Session getSession() throws JSchException {
-        Session session = sessionPool.poll();
-        if (session != null && session.isConnected()) {
-            return session;
-        }
-        if (session != null) {
-            session.disconnect();
-        }
-        JSch jsch = new JSch();
-        jsch.addIdentity(sftpConfig.getPrivateKeyPath());
-        session = jsch.getSession(
-                sftpConfig.getUsername(),
-                sftpConfig.getHost(),
-                sftpConfig.getPort()
-        );
-        session.setConfig("StrictHostKeyChecking", "no");
-        session.setConfig("compression.s2c", "none");
-        session.setConfig("compression.c2s", "none");
-        session.connect();
-        return session;
+        Session s = sessionPool.poll();
+        if (s != null && s.isConnected()) return s;
+        if (s != null) s.disconnect();
+        JSch j = new JSch();
+        j.addIdentity(sftpConfig.getPrivateKeyPath());
+        Session sess = j.getSession(sftpConfig.getUsername(), sftpConfig.getHost(), sftpConfig.getPort());
+        sess.setConfig("StrictHostKeyChecking", "no");
+        sess.setConfig("compression.s2c", "none");
+        sess.setConfig("compression.c2s", "none");
+        sess.connect();
+        return sess;
     }
 
     private void returnSession(Session session) {
