@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { useFetch } from "../../../../hooks/useFetch";
-import { fetchPoolStats } from "../../../../api/poolPageApi";
+import { fetchPoolStats, fetchDemoPoolStats } from "../../../../api/poolPageApi";
 import { useToast } from "../../../../hooks/useToast";
 import { Toast } from "../../../../components/Toast";
 import { useAuth } from "../../../../hooks/useAuth";
@@ -10,10 +10,15 @@ import DeletePoolModal from "./components/DeletePoolModal";
 import "./style.css";
 
 const InfoTab = ({ poolId, onPoolDeleted, onPoolUpdated, isPublicView = false }: { poolId: number; onPoolDeleted?: () => void; onPoolUpdated?: () => void; isPublicView?: boolean }) => {
-  const fetcher = useCallback(() => fetchPoolStats(poolId), [poolId]);
+  const { user } = useAuth();
+  const fetcher = useCallback(() => {
+    if (!user) {
+      return fetchDemoPoolStats();
+    }
+    return fetchPoolStats(poolId);
+  }, [poolId, user]);
   const { data: stats, loading, error, refetch } = useFetch<PoolStats>(fetcher);
   const { toast, hideToast } = useToast();
-  const { user } = useAuth();
   
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);

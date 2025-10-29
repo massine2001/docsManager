@@ -2,7 +2,8 @@ import { useState, useCallback, useEffect } from "react";
 import { useFetch } from "../../../../hooks/useFetch";
 import { useMutation } from "../../../../hooks/useMutation";
 import { useToast } from "../../../../hooks/useToast";
-import { fetchPoolStats } from "../../../../api/poolPageApi";
+import { fetchPoolStats, fetchDemoPoolStats } from "../../../../api/poolPageApi";
+import { useAuth } from "../../../../hooks/useAuth";
 import { addMemberToPool, removeMemberFromPool, updateMemberRole } from "../../../../api/poolPageApi";
 import type { User } from "../../../../types/models";
 import { Toast } from "../../../../components/Toast";
@@ -21,10 +22,16 @@ type Props = {
 
 const MembersTab = ({ poolId, isPublicView = false }: Props) => {
   const { toast, showSuccess, showError, hideToast } = useToast();
-  
+  const { user } = useAuth();
+
   const [refreshKey, setRefreshKey] = useState(0);
-  
-  const fetcherStats = useCallback(() => fetchPoolStats(poolId), [poolId, refreshKey]);
+
+  const fetcherStats = useCallback(() => {
+    if (!user) {
+      return fetchDemoPoolStats();
+    }
+    return fetchPoolStats(poolId);
+  }, [poolId, refreshKey, user]);
   const { data: poolStats, loading: loadingStats, error: errorStats } = useFetch(fetcherStats);
 
 

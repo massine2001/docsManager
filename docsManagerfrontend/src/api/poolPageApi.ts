@@ -36,6 +36,9 @@ export const fetchPoolsByUserId = (userId: number) =>
 export const fetchPoolStats = (poolId: number) =>
   axiosClient.get<PoolStats>(`/api/pool/stats/${poolId}`).then(res => res.data);
 
+export const fetchDemoPoolStats = () =>
+  axiosClient.get<PoolStats>(`/public/demopoolstats`).then(res => res.data);
+
 export const fetchFilesByPoolId = (poolId: number) =>
   axiosClient.get<File[]>(`/api/pool/files/${poolId}`).then(res => res.data);
 
