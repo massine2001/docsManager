@@ -35,7 +35,9 @@ public class FileController {
     private final PoolService poolService;
     private final CurrentUserProvider currentUser;
     private final SftpConfig sftpConfig;
-    private final AccessService accessService; 
+    private final AccessService accessService;
+
+    private static final Logger log = LoggerFactory.getLogger(FileController.class);
 
     public FileController(
             FileService fileService,
@@ -228,12 +230,13 @@ public class FileController {
 
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<File> uploadFile(
-            @RequestPart("file") MultipartFile file,
+    public ResponseEntity<?> uploadFile(
+            @RequestParam("file") MultipartFile file,
             @RequestParam("poolId") int poolId,
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "description", required = false) String description,
-            @RequestParam(value = "expirationDate", required = false) String expirationDateStr) {
+            @RequestParam(value = "expirationDate", required = false) String expirationDateStr)
+    {
      try {
             User u = currentUser.get();
 
@@ -283,13 +286,12 @@ public class FileController {
             File persisted = fileService.saveFile(savedFile);
             return ResponseEntity.status(HttpStatus.CREATED).body(persisted);
         } catch (Exception e) {
-         Logger log = LoggerFactory.getLogger(FileController.class);
          String fn = (file != null ? file.getOriginalFilename() : "null");
          long sz = (file != null ? file.getSize() : -1);
          log.error("Upload failed: poolId={}, filename={}, size={}, baseDir={}",
                  poolId, fn, sz, sftpConfig.normalizedBaseDir(), e);
          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                 .body((File) Map.of("error","UPLOAD_FAILED","detail", e.getMessage()));
+                 .body(Map.of("error", "UPLOAD_FAILED", "detail", e.getMessage()));
      }
     }
 
