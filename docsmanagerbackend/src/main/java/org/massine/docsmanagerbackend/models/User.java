@@ -4,6 +4,7 @@ package org.massine.docsmanagerbackend.models;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 
+
 @Entity
 @Table(name = "users", indexes = {
         @Index(name = "idx_users_sub", columnList = "sub", unique = true)
@@ -18,23 +19,56 @@ public class User {
     @Column(unique = true, length = 255)
     private String email;
 
-    @Column
+    @Column(length = 255)
     private String lastName;
 
-    @Column
+    @Column(length = 255)
     private String firstName;
 
-    @Column
-    private String role;
+    @Column(name = "role", nullable = false, length = 32)
+    private String role = "USER";
 
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt = OffsetDateTime.now();
 
-    public User() {}
-    public User(String sub) { this.sub = sub; }
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getSub() {
+        return sub;
+    }
+
+    public void setSub(String sub) {
+        this.sub = sub;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getLastName() {
         return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getRole() {
@@ -45,13 +79,12 @@ public class User {
         this.role = role;
     }
 
-    public void setLastName(String last_name) {this.lastName = last_name;}
-    public String getFirstName() {return firstName;}
-    public void setFirstName(String first_name) {this.firstName = first_name;}
-    public Integer getId() { return id; }
-    public String getSub() { return sub; }
-    public void setSub(String sub) { this.sub = sub; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-    public OffsetDateTime getCreatedAt() { return createdAt; }
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+    // getters/setters identiques
 }

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
-@Table(name = "Access")
+@Table(name = "access")
 public class Access {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,10 +19,8 @@ public class Access {
     @JoinColumn(name = "pool_id", referencedColumnName = "id", nullable = false)
     private Pool pool;
 
-    @ColumnDefault("'member'")
-    @Lob
-    @Column(name = "role")
-    private String role;
+    @Column(name = "role", nullable = false, length = 32)
+    private String role = "member";
 
     public Integer getId() {
         return id;
@@ -55,5 +53,5 @@ public class Access {
     public void setRole(String role) {
         this.role = role;
     }
-
+// getters/setters identiques
 }

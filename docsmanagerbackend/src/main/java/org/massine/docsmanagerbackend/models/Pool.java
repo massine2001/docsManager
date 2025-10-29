@@ -6,32 +6,26 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 @Entity
-@Table(name = "Pool")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Table(name = "pool")
 public class Pool {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, length = 255)
     private String name;
 
-    @Lob
-    @Column(name = "description")
-    private String description;
+    public String getDescription() {
+        return description;
+    }
 
-    @Column(name = "created_by")
-    private Integer createdBy;
-
-    @ColumnDefault("current_timestamp()")
-    @Column(name = "created_at")
-    private Instant createdAt;
-
-    @ColumnDefault("0")
-    @Column(name = "public_access", nullable = false)
-    private Boolean publicAccess = false;
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public Integer getId() {
         return id;
@@ -47,14 +41,6 @@ public class Pool {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public Integer getCreatedBy() {
@@ -81,4 +67,17 @@ public class Pool {
         this.publicAccess = publicAccess;
     }
 
+    @Column(name = "description", length = 10000)
+    private String description;
+
+    @Column(name = "created_by")
+    private Integer createdBy;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Instant createdAt;
+
+    @Column(name = "public_access", nullable = false)
+    private Boolean publicAccess = false;
+    // getters/setters identiques
 }

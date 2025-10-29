@@ -9,11 +9,10 @@ import java.time.Instant;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "File",
-        indexes = {
-                @Index(name = "idx_file_pool", columnList = "pool_id"),
-                @Index(name = "idx_file_uploader", columnList = "uploaded_by")
-        })
+@Table(name = "file", indexes = {
+        @Index(name = "idx_file_pool", columnList = "pool_id"),
+        @Index(name = "idx_file_uploader", columnList = "uploaded_by")
+})
 public class File {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
