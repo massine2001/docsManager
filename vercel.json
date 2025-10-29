@@ -1,9 +1,5 @@
 {
   "cleanUrls": true,
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://bff.massine.org/api/$1" },
-    { "source": "/(.*)", "destination": "/index.html" }
-  ],
   "headers": [
     {
       "source": "/assets/(.*)",
@@ -17,5 +13,11 @@
         { "key": "Cache-Control", "value": "no-cache" }
       ]
     }
+  ],
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "https://docsmanagerbff.massine.org/api/$1" },
+    { "source": "/assets/(.*)", "destination": "/assets/$1" },
+    { "source": "/favicon.ico", "destination": "/favicon.ico" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
