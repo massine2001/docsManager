@@ -13,6 +13,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -309,106 +310,156 @@ public class PublicController {
         return null;
     }
 
+
     @GetMapping("/demopoolstats")
+    @Transactional(readOnly = true)
     public ResponseEntity<Map<String, Object>> getPublicPool14Stats() {
         final int poolId = 14;
-        Pool pool = poolService.getPoolById(poolId);
-        if (pool == null) {
-            return ResponseEntity.notFound().build();
-        }
 
-        Map<String, Object> stats = new HashMap<>();
-        stats.put("pool", pool);
+        var pool = poolService.getPoolById(poolId);
+        if (pool == null) return ResponseEntity.notFound().build();
 
-        List<User> members = accessService.getUsersFromPool(poolId);
-        List<Access> accesses = accessService.getAccessesByPool(poolId);
-        List<File> files = fileService.findByPoolId(poolId);
+        var members = accessService.getUsersFromPool(poolId);
+        var accesses = accessService.getAccessesByPool(poolId);
+        var files    = fileService.findByPoolId(poolId);
 
-        stats.put("membersCount", members.size());
-        stats.put("members", members);
-        stats.put("accesses", accesses);
+        var poolDto = PoolDto.from(pool);
+        var memberDtos = members.stream().map(UserDto::from).toList();
+        var accessDtos = accesses.stream().map(a -> {
+            var user = a.getUser() != null ? UserDto.from(a.getUser()) : null;
+            Map<String, Object> accessMap = new java.util.HashMap<>();
+            accessMap.put("id", a.getId());
+            accessMap.put("user", user);
+            accessMap.put("poolId", a.getPool() != null ? a.getPool().getId() : null);
+            accessMap.put("role", a.getRole());
+            return accessMap;
+        }).toList();
+        var fileDtos   = files.stream().map(FileDto::from).toList();
 
-        Map<String, Long> roleDistribution = accesses.stream()
-                .filter(a -> a.getRole() != null)
-                .collect(Collectors.groupingBy(Access::getRole, Collectors.counting()));
-        stats.put("roleDistribution", roleDistribution);
+        Map<String, Long> roleDistribution = accessDtos.stream()
+                .filter(a -> a.get("role") != null)
+                .collect(java.util.stream.Collectors.groupingBy(
+                        a -> (String) a.get("role"),
+                        java.util.stream.Collectors.counting()));
 
-        Map<String, Long> userRoleDistribution = members.stream()
-                .filter(u -> u.getRole() != null)
-                .collect(Collectors.groupingBy(User::getRole, Collectors.counting()));
-        stats.put("userRoleDistribution", userRoleDistribution);
+        Map<String, Long> userRoleDistribution = memberDtos.stream()
+                .filter(u -> u.role() != null)
+                .collect(java.util.stream.Collectors.groupingBy(UserDto::role, java.util.stream.Collectors.counting()));
 
-        stats.put("filesCount", files.size());
-        stats.put("files", files);
-
-        Map<User, Long> uploaderStats = files.stream()
+        var topUploaders = files.stream()
                 .filter(f -> f.getUserUploader() != null)
-                .collect(Collectors.groupingBy(File::getUserUploader, Collectors.counting()));
-        List<Map.Entry<User, Long>> topUploaders = uploaderStats.entrySet().stream()
-                .sorted(Map.Entry.<User, Long>comparingByValue().reversed())
+                .collect(java.util.stream.Collectors.groupingBy(
+                        f -> f.getUserUploader().getId(), java.util.stream.Collectors.counting()))
+                .entrySet().stream()
+                .sorted(java.util.Map.Entry.<Integer, Long>comparingByValue().reversed())
                 .limit(5)
-                .collect(Collectors.toList());
-        stats.put("topUploaders", topUploaders);
+                .map(e -> Map.of(
+                        "user", members.stream().filter(u -> u.getId().equals(e.getKey()))
+                                .findFirst().map(UserDto::from).orElse(null),
+                        "count", e.getValue()))
+                .toList();
 
         Map<String, Long> filesPerDay = files.stream()
                 .filter(f -> f.getCreatedAt() != null)
-                .collect(Collectors.groupingBy(
+                .collect(java.util.stream.Collectors.groupingBy(
                         f -> f.getCreatedAt().toString().substring(0, 10),
-                        Collectors.counting()
+                        java.util.stream.Collectors.counting()
                 ));
-        stats.put("filesPerDay", filesPerDay);
 
-        Optional<File> lastFile = files.stream()
+        var lastFile = files.stream()
                 .filter(f -> f.getCreatedAt() != null)
-                .max(Comparator.comparing(File::getCreatedAt));
-        stats.put("lastFile", lastFile.orElse(null));
+                .max(java.util.Comparator.comparing(org.massine.docsmanagerbackend.models.File::getCreatedAt))
+                .map(FileDto::from)
+                .orElse(null);
 
-        List<User> inactiveMembers = members.stream()
+        var inactiveMembers = memberDtos.stream()
                 .filter(u -> files.stream().noneMatch(f ->
-                        f.getUserUploader() != null && f.getUserUploader().getId().equals(u.getId())))
-                .collect(Collectors.toList());
-        stats.put("inactiveMembers", inactiveMembers);
-        stats.put("inactiveMembersCount", inactiveMembers.size());
+                        f.getUserUploader() != null && f.getUserUploader().getId().equals(u.id())))
+                .toList();
 
-        stats.put("poolCreatedAt", pool.getCreatedAt());
         long poolAgeInDays = 0;
         if (pool.getCreatedAt() != null) {
-            poolAgeInDays = ChronoUnit.DAYS.between(pool.getCreatedAt(), Instant.now());
+            poolAgeInDays = java.time.temporal.ChronoUnit.DAYS.between(pool.getCreatedAt(), java.time.Instant.now());
         }
-        stats.put("poolAgeInDays", poolAgeInDays);
 
-        Optional<User> newestMember = members.stream()
+        double avgFilesPerMember = memberDtos.isEmpty() ? 0.0 : (double) fileDtos.size() / memberDtos.size();
+        double activityRate = memberDtos.isEmpty() ? 0.0 :
+                ((double) (memberDtos.size() - inactiveMembers.size()) / memberDtos.size() * 100.0);
+
+        Map<String,Object> out = new java.util.HashMap<>();
+        out.put("pool", poolDto);
+        out.put("membersCount", memberDtos.size());
+        out.put("members", memberDtos);
+        out.put("accesses", accessDtos);
+        out.put("roleDistribution", roleDistribution);
+        out.put("userRoleDistribution", userRoleDistribution);
+        out.put("filesCount", fileDtos.size());
+        out.put("files", fileDtos);
+        out.put("topUploaders", topUploaders);
+        out.put("filesPerDay", filesPerDay);
+        out.put("lastFile", lastFile);
+        out.put("mostActiveMembers", topUploaders);
+        out.put("inactiveMembers", inactiveMembers);
+        out.put("inactiveMembersCount", inactiveMembers.size());
+        out.put("poolCreatedAt", pool.getCreatedAt());
+        out.put("poolAgeInDays", poolAgeInDays);
+        out.put("newestMember", members.stream()
                 .filter(u -> u.getCreatedAt() != null)
-                .max(Comparator.comparing(User::getCreatedAt));
-        Optional<User> oldestMember = members.stream()
+                .max(java.util.Comparator.comparing(org.massine.docsmanagerbackend.models.User::getCreatedAt))
+                .map(UserDto::from).orElse(null));
+        out.put("oldestMember", members.stream()
                 .filter(u -> u.getCreatedAt() != null)
-                .min(Comparator.comparing(User::getCreatedAt));
-        stats.put("newestMember", newestMember.orElse(null));
-        stats.put("oldestMember", oldestMember.orElse(null));
-
-        double avgFilesPerMember = members.isEmpty() ? 0 : (double) files.size() / members.size();
-        stats.put("avgFilesPerMember", Math.round(avgFilesPerMember * 100.0) / 100.0);
-
-        double activityRate = members.isEmpty() ? 0 :
-                ((double) (members.size() - inactiveMembers.size()) / members.size() * 100);
-        stats.put("activityRate", Math.round(activityRate * 100.0) / 100.0);
-
-        Map<String, Long> fileExtensions = files.stream()
-                .filter(f -> f.getName() != null)
+                .min(java.util.Comparator.comparing(org.massine.docsmanagerbackend.models.User::getCreatedAt))
+                .map(UserDto::from).orElse(null));
+        out.put("fileExtensions", files.stream()
                 .map(f -> {
                     String name = f.getName();
-                    int lastDot = name.lastIndexOf('.');
-                    return lastDot > 0 ? name.substring(lastDot + 1).toLowerCase() : "sans extension";
+                    int i = name != null ? name.lastIndexOf('.') : -1;
+                    return (i > 0) ? name.substring(i + 1).toLowerCase() : "sans extension";
                 })
-                .collect(Collectors.groupingBy(ext -> ext, Collectors.counting()));
-        stats.put("fileExtensions", fileExtensions);
+                .collect(java.util.stream.Collectors.groupingBy(e -> e, java.util.stream.Collectors.counting())));
 
         if (pool.getCreatedBy() != null) {
-            User creator = userService.findById(pool.getCreatedBy());
-            stats.put("creator", creator);
+            var creator = userService.findById(pool.getCreatedBy());
+            out.put("creator", creator != null ? UserDto.from(creator) : null);
         }
 
-        return ResponseEntity.ok(stats);
+        return ResponseEntity.ok(out);
     }
-
+        public record PoolDto(Integer id, String name, String description,
+                              Integer createdBy, java.time.Instant createdAt,
+                              Boolean publicAccess) {
+            static PoolDto from(org.massine.docsmanagerbackend.models.Pool p) {
+                return new PoolDto(p.getId(), p.getName(), p.getDescription(),
+                        p.getCreatedBy(), p.getCreatedAt(), p.getPublicAccess());
+            }
+        }
+        public record UserDto(Integer id, String email, String firstName, String lastName,
+                              String role, java.time.Instant createdAt) {
+            static UserDto from(org.massine.docsmanagerbackend.models.User u) {
+                return new UserDto(u.getId(), u.getEmail(), u.getFirstName(),
+                        u.getLastName(), u.getRole(), u.getCreatedAt().toInstant());
+            }
+        }
+        public record AccessDto(Integer id, Integer userId, Integer poolId, String role) {
+            static AccessDto from(org.massine.docsmanagerbackend.models.Access a) {
+                return new AccessDto(a.getId(),
+                        a.getUser() != null ? a.getUser().getId() : null,
+                        a.getPool() != null ? a.getPool().getId() : null,
+                        a.getRole());
+            }
+        }
+        public record FileDto(Integer id, String name, String path,
+                              Integer poolId, Integer uploaderId,
+                              java.time.Instant createdAt, String description,
+                              java.time.LocalDate expirationDate) {
+            static FileDto from(org.massine.docsmanagerbackend.models.File f) {
+                return new FileDto(
+                        f.getId(), f.getName(), f.getPath(),
+                        f.getPool() != null ? f.getPool().getId() : null,
+                        f.getUserUploader() != null ? f.getUserUploader().getId() : null,
+                        f.getCreatedAt(), f.getDescription(), f.getExpirationDate()
+                );
+            }
+        }
 }
