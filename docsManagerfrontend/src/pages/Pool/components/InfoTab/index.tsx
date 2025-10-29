@@ -116,8 +116,7 @@ const InfoTab = ({ poolId, onPoolDeleted, onPoolUpdated, isPublicView = false }:
           <span className="info-tab__stat-label">Activité</span>
         </div>
         <div className="info-tab__stat">
-          <span className="info-tab__stat-value">{stats.avgFilesPerMember.toFixed(1)}</span>
-          <span className="info-tab__stat-label">Moy/membre</span>
+<span className="info-tab__stat-value">{(stats.avgFilesPerMember ?? 0).toFixed(1)}</span>          <span className="info-tab__stat-label">Moy/membre</span>
         </div>
         <div className="info-tab__stat">
           <span className="info-tab__stat-value">{stats.poolAgeInDays}</span>
