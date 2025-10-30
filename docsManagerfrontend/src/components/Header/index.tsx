@@ -36,9 +36,11 @@ const Header = () => {
           <NavLink to="/profil">{LABEL_HEADER.PROFIL}</NavLink>
 
           <div className="navbar-right">
+            {isDesktop && 
             <span className="navbar-user">
               👤 {user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : user?.email}
             </span>
+            }
             <button onClick={logout} className="navbar-logout">
               Déconnexion
             </button>
