@@ -5,7 +5,8 @@ import { useToast } from "../../../../hooks/useToast";
 import { fetchPoolStats } from "../../../../api/poolPageApi";
 import { useAuth } from "../../../../hooks/useAuth";
 import { addMemberToPool, removeMemberFromPool, updateMemberRole } from "../../../../api/poolPageApi";
-import type { User } from "../../../../types/models";
+import type { PoolStats, User } from "../../../../types/models";
+import { getFakeStats } from "../../../../fake/fakePoolData";
 import { Toast } from "../../../../components/Toast";
 import { HeaderBar } from "./components/HeaderBar";
 import { MemberRow } from "./components/MemberRow";
@@ -14,7 +15,6 @@ import { ChangeRoleModal } from "./components/ChangeRoleModal";
 import { RemoveMemberModal } from "./components/RemoveMemberModal";
 import { useFilteredMembers } from "./hooks/useFilteredMembers";
 import "./style.css";
-import { fetchDemoPoolStats } from "../../../../api/publicPoolsApi";
 
 type Props = {
   poolId: number;
@@ -27,9 +27,11 @@ const MembersTab = ({ poolId, isPublicView = false }: Props) => {
 
   const [refreshKey, setRefreshKey] = useState(0);
 
+  const fakeStats: PoolStats = getFakeStats(poolId);
+
   const fetcherStats = useCallback(() => {
     if (!user) {
-      return fetchDemoPoolStats();
+      return Promise.resolve(fakeStats);
     }
     return fetchPoolStats(poolId);
   }, [poolId, refreshKey, user]);

@@ -50,12 +50,6 @@ const ProfilPage = () => {
           >
             📊 Statistiques
           </button>
-          <button
-            className={`profil-tab ${activeTab === 'password' ? 'active' : ''}`}
-            onClick={() => setActiveTab('password')}
-          >
-            🔐 Sécurité
-          </button>
         </div>
 
         <div className="profil-content">

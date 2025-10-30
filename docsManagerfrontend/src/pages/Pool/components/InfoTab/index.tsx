@@ -5,20 +5,22 @@ import { useToast } from "../../../../hooks/useToast";
 import { Toast } from "../../../../components/Toast";
 import { useAuth } from "../../../../hooks/useAuth";
 import type { PoolStats } from "../../../../types/models";
+import { getFakeStats } from "../../../../fake/fakePoolData";
 import EditPoolModal from "./components/EditPoolModal";
 import DeletePoolModal from "./components/DeletePoolModal";
 import "./style.css";
-import { fetchDemoPoolStats } from "../../../../api/publicPoolsApi";
 
 const InfoTab = ({ poolId, onPoolDeleted, onPoolUpdated, isPublicView = false }: { poolId: number; onPoolDeleted?: () => void; onPoolUpdated?: () => void; isPublicView?: boolean }) => {
   const { user } = useAuth();
+  const fakeStats: PoolStats = getFakeStats(poolId);
+
   const fetcher = useCallback(() => {
     if (!user) {
-      return fetchDemoPoolStats();
+      return Promise.resolve(fakeStats);
     }
     return fetchPoolStats(poolId);
   }, [poolId, user]);
-  const { data: stats, loading, error, refetch } = useFetch<PoolStats | null>(fetcher);
+  const { data: stats, loading, error, refetch } = useFetch<PoolStats>(fetcher);
   const { toast, hideToast } = useToast();
   
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -116,7 +118,8 @@ const InfoTab = ({ poolId, onPoolDeleted, onPoolUpdated, isPublicView = false }:
           <span className="info-tab__stat-label">Activité</span>
         </div>
         <div className="info-tab__stat">
-<span className="info-tab__stat-value">{(stats.avgFilesPerMember ?? 0).toFixed(1)}</span>          <span className="info-tab__stat-label">Moy/membre</span>
+          <span className="info-tab__stat-value">{(stats.avgFilesPerMember ?? 0).toFixed(1)}</span>         
+          <span className="info-tab__stat-label">Moy/membre</span>
         </div>
         <div className="info-tab__stat">
           <span className="info-tab__stat-value">{stats.poolAgeInDays}</span>
