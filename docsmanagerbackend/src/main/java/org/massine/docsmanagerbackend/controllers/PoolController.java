@@ -257,32 +257,51 @@ public class PoolController {
         stats.put("viewsPerDay", viewsPerDay);
         stats.put("downloadsPerDay", downloadsPerDay);
 
-        Map<User, Long> viewsByUploader = files.stream()
+        List<Map<String, Object>> viewsByUploader = files.stream()
                 .filter(f -> f.getUserUploader() != null)
-                .collect(Collectors.groupingBy(
-                        File::getUserUploader,
-                        Collectors.summingLong(File::getViewCount)
-                ));
-        Map<User, Long> downloadsByUploader = files.stream()
+                .collect(Collectors.groupingBy(File::getUserUploader, Collectors.summingLong(File::getViewCount)))
+                .entrySet().stream()
+                .map(e -> {
+                    Map<String, Object> m = new HashMap<>();
+                    m.put("uploader", e.getKey());
+                    m.put("views", e.getValue());
+                    return m;
+                })
+                .collect(Collectors.toList());
+
+        List<Map<String, Object>> downloadsByUploader = files.stream()
                 .filter(f -> f.getUserUploader() != null)
-                .collect(Collectors.groupingBy(
-                        File::getUserUploader,
-                        Collectors.summingLong(File::getDownloadCount)
-                ));
+                .collect(Collectors.groupingBy(File::getUserUploader, Collectors.summingLong(File::getDownloadCount)))
+                .entrySet().stream()
+                .map(e -> {
+                    Map<String, Object> m = new HashMap<>();
+                    m.put("uploader", e.getKey());
+                    m.put("downloads", e.getValue());
+                    return m;
+                })
+                .collect(Collectors.toList());
+
         stats.put("viewsByUploader", viewsByUploader);
         stats.put("downloadsByUploader", downloadsByUploader);
 
+        List<Map<String, Object>> topUploaders = files.stream()
+                .filter(file -> file.getUserUploader() != null)
+                .collect(Collectors.groupingBy(File::getUserUploader, Collectors.counting()))
+                .entrySet().stream()
+                .sorted(Map.Entry.<User, Long>comparingByValue().reversed())
+                .limit(5)
+                .map(e -> {
+                    Map<String, Object> m = new HashMap<>();
+                    m.put("uploader", e.getKey());
+                    m.put("count", e.getValue());
+                    return m;
+                })
+                .collect(Collectors.toList());
+
+        stats.put("topUploaders", topUploaders);
         stats.put("filesCount", files.size());
         stats.put("files", files);
 
-        Map<User, Long> uploaderStats = files.stream()
-                .filter(file -> file.getUserUploader() != null)
-                .collect(Collectors.groupingBy(File::getUserUploader, Collectors.counting()));
-        List<Map.Entry<User, Long>> topUploaders = uploaderStats.entrySet().stream()
-                .sorted(Map.Entry.<User, Long>comparingByValue().reversed())
-                .limit(5)
-                .collect(Collectors.toList());
-        stats.put("topUploaders", topUploaders);
 
         Map<String, Long> filesPerDay = files.stream()
                 .filter(file -> file.getCreatedAt() != null)
