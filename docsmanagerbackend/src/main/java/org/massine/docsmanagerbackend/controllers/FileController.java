@@ -316,6 +316,8 @@ public class FileController {
         }
 
         try {
+            fileService.incDownload(fileId);
+
             FileService.RemoteStream rs = fileService.getRemoteStream(file.getPath());
             HttpHeaders headers = new HttpHeaders();
             headers.setContentDisposition(ContentDisposition.attachment().filename(file.getName()).build());
@@ -343,6 +345,8 @@ public class FileController {
         }
 
         try {
+            fileService.incView(id);
+
             FileService.RemoteStream rs = fileService.getRemoteStream(file.getPath());
             String fileName = file.getName().toLowerCase();
             MediaType contentType;

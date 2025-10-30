@@ -218,6 +218,60 @@ public class PoolController {
 
         List<File> files = fileService.findByPoolId(poolId);
 
+        long totalViews = files.stream()
+                .mapToLong(File::getViewCount)
+                .sum();
+        long totalDownloads = files.stream()
+                .mapToLong(File::getDownloadCount)
+                .sum();
+
+        stats.put("totalViews", totalViews);
+        stats.put("totalDownloads", totalDownloads);
+
+        stats.put("avgViewsPerFile", files.isEmpty() ? 0D : Math.round((totalViews * 100.0 / files.size())) / 100.0);
+        stats.put("avgDownloadsPerFile", files.isEmpty() ? 0D : Math.round((totalDownloads * 100.0 / files.size())) / 100.0);
+
+        List<File> topViewedFiles = files.stream()
+                .sorted(Comparator.comparingLong(f -> -1L * f.getViewCount()))
+                .limit(5)
+                .collect(Collectors.toList());
+        List<File> topDownloadedFiles = files.stream()
+                .sorted(Comparator.comparingLong(f -> -1L * f.getDownloadCount()))
+                .limit(5)
+                .collect(Collectors.toList());
+        stats.put("topViewedFiles", topViewedFiles);
+        stats.put("topDownloadedFiles", topDownloadedFiles);
+
+        Map<String, Long> viewsPerDay = files.stream()
+                .filter(f -> f.getCreatedAt() != null)
+                .collect(Collectors.groupingBy(
+                        f -> f.getCreatedAt().toString().substring(0, 10),
+                        Collectors.summingLong(File::getViewCount)
+                ));
+        Map<String, Long> downloadsPerDay = files.stream()
+                .filter(f -> f.getCreatedAt() != null)
+                .collect(Collectors.groupingBy(
+                        f -> f.getCreatedAt().toString().substring(0, 10),
+                        Collectors.summingLong(File::getDownloadCount)
+                ));
+        stats.put("viewsPerDay", viewsPerDay);
+        stats.put("downloadsPerDay", downloadsPerDay);
+
+        Map<User, Long> viewsByUploader = files.stream()
+                .filter(f -> f.getUserUploader() != null)
+                .collect(Collectors.groupingBy(
+                        File::getUserUploader,
+                        Collectors.summingLong(File::getViewCount)
+                ));
+        Map<User, Long> downloadsByUploader = files.stream()
+                .filter(f -> f.getUserUploader() != null)
+                .collect(Collectors.groupingBy(
+                        File::getUserUploader,
+                        Collectors.summingLong(File::getDownloadCount)
+                ));
+        stats.put("viewsByUploader", viewsByUploader);
+        stats.put("downloadsByUploader", downloadsByUploader);
+
         stats.put("filesCount", files.size());
         stats.put("files", files);
 

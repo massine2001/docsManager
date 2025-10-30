@@ -150,6 +150,8 @@ public class PublicController {
         }
 
         try {
+            fileService.incDownload(fileId);
+
             FileService.RemoteStream rs = fileService.getRemoteStream(file.getPath());
             HttpHeaders headers = new HttpHeaders();
             String filename = file.getName();
@@ -185,6 +187,8 @@ public class PublicController {
         }
 
         try {
+            fileService.incView(fileId);
+
             FileService.RemoteStream rs = fileService.getRemoteStream(file.getPath());
             String fileName = file.getName();
             if (fileName == null || fileName.isBlank()) {

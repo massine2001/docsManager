@@ -46,6 +46,18 @@ public class File {
     @Column(name = "expiration_date")
     private LocalDate expirationDate;
 
+    @Column(name = "download_count", nullable = false)
+    private long downloadCount = 0L;
+
+    @Column(name = "view_count", nullable = false)
+    private long viewCount = 0L;
+
+    public long getDownloadCount() { return downloadCount; }
+    public void setDownloadCount(long downloadCount) { this.downloadCount = downloadCount; }
+    public long getViewCount() { return viewCount; }
+    public void setViewCount(long viewCount) { this.viewCount = viewCount; }
+
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 

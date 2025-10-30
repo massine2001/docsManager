@@ -243,4 +243,10 @@ public class FileService {
             if (session != null) session.disconnect();
         }
     }
+
+    @Transactional
+    public void incDownload(int fileId) { fileRepository.incrementDownload(fileId); }
+    @Transactional
+    public void incView(int fileId) { fileRepository.incrementView(fileId); }
+
 }
