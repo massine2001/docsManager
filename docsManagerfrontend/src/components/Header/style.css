@@ -87,6 +87,7 @@
   transition:transform .15s ease, box-shadow .2s ease, filter .2s ease;
   display:inline-flex; align-items:center; justify-content:center;
   line-height:1;
+  cursor: pointer;
 }
 
 .navbar-login{

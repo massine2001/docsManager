@@ -44,6 +44,8 @@ export interface File {
   pool: Pool;
   userUploader: User;
   createdAt: string;
+  viewCount?: number;
+  downloadCount?: number;
 }
 
 export interface Access {
@@ -55,29 +57,41 @@ export interface Access {
 
 export interface PoolStats {
   pool: Pool;
-  
+
   membersCount: number;
   members: User[];
   accesses: Access[];
   roleDistribution: Record<string, number>;
   userRoleDistribution: Record<string, number>;
-  
+
   filesCount: number;
   files: File[];
   topUploaders: Array<{ user: User; count: number }>;
   filesPerDay: Record<string, number>;
   lastFile: File | null;
   fileExtensions: Record<string, number>;
-  
+
   mostActiveMembers: Array<{ user: User; count: number }>;
   inactiveMembers: User[];
   inactiveMembersCount: number;
   activityRate: number;
   avgFilesPerMember: number;
-  
+
   poolCreatedAt: string;
   poolAgeInDays: number;
   newestMember: User | null;
   oldestMember: User | null;
   creator: User | null;
+
+  // Nouveaux champs API
+  totalViews: number | undefined;
+  totalDownloads: number | undefined;
+  avgViewsPerFile: number | undefined;
+  avgDownloadsPerFile: number | undefined;
+  topViewedFiles: File[];
+  topDownloadedFiles: File[];
+  viewsPerDay: Record<string, number | undefined>;
+  downloadsPerDay: Record<string, number | undefined>;
+  viewsByUploader: Record<string, number>;
+  downloadsByUploader: Record<string, number>;
 }

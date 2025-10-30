@@ -60,6 +60,16 @@ export function getFakeStats(poolId: number): PoolStats {
     fileExtensions: { pdf: 1 },
     creator: fakeUser,
     activityRate: 100,
-    avgFilesPerMember: 1
+    avgFilesPerMember: 1,
+    totalViews: undefined,
+    totalDownloads: undefined,
+    avgViewsPerFile: undefined,
+    avgDownloadsPerFile: undefined,
+    viewsPerDay: { '2025-10-29': undefined },
+    downloadsPerDay: { '2025-10-29': undefined },
+    topViewedFiles: [],
+    topDownloadedFiles: [],
+    viewsByUploader: {},
+    downloadsByUploader: {}
   };
 }

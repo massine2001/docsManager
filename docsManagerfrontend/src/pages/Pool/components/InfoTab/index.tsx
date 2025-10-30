@@ -71,6 +71,7 @@ const InfoTab = ({ poolId, onPoolDeleted, onPoolUpdated, isPublicView = false }:
     user: 'Utilisateur',
   };
 
+
   return (
     <div className="info-tab">
       {isPublicView && (
@@ -118,7 +119,7 @@ const InfoTab = ({ poolId, onPoolDeleted, onPoolUpdated, isPublicView = false }:
           <span className="info-tab__stat-label">Activité</span>
         </div>
         <div className="info-tab__stat">
-          <span className="info-tab__stat-value">{(stats.avgFilesPerMember ?? 0).toFixed(1)}</span>         
+          <span className="info-tab__stat-value">{(stats.avgFilesPerMember ?? 0).toFixed(1)}</span>
           <span className="info-tab__stat-label">Moy/membre</span>
         </div>
         <div className="info-tab__stat">
@@ -131,6 +132,23 @@ const InfoTab = ({ poolId, onPoolDeleted, onPoolUpdated, isPublicView = false }:
             <span className="info-tab__stat-label">Inactifs</span>
           </div>
         )}
+
+        <div className="info-tab__stat">
+          <span className="info-tab__stat-value">{stats.totalViews}</span>
+          <span className="info-tab__stat-label">Vues</span>
+        </div>
+        <div className="info-tab__stat">
+          <span className="info-tab__stat-value">{stats.totalDownloads}</span>
+          <span className="info-tab__stat-label">Téléch.</span>
+        </div>
+        <div className="info-tab__stat">
+          <span className="info-tab__stat-value">{stats.avgViewsPerFile}</span>
+          <span className="info-tab__stat-label">Vues/fichier</span>
+        </div>
+        <div className="info-tab__stat">
+          <span className="info-tab__stat-value">{stats.avgDownloadsPerFile}</span>
+          <span className="info-tab__stat-label">Téléch./fichier</span>
+        </div>
       </div>
 
       <div className="info-tab__grid">
@@ -172,6 +190,34 @@ const InfoTab = ({ poolId, onPoolDeleted, onPoolUpdated, isPublicView = false }:
           </section>
         )}
 
+        {stats.topViewedFiles && stats.topViewedFiles.length > 0 && (
+          <section className="info-tab__section">
+            <h3 className="info-tab__section-title">Fichiers les plus vus</h3>
+            <div className="info-tab__compact-list">
+              {stats.topViewedFiles.slice(0, 5).map((file) => (
+                <div key={file.id} className="info-tab__compact-item">
+                  <span>{file.name.length > 20 ? file.name.slice(0, 20) + '...' : file.name}</span>
+                  <strong>{file.viewCount} vues</strong>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {stats.topDownloadedFiles && stats.topDownloadedFiles.length > 0 && (
+          <section className="info-tab__section">
+            <h3 className="info-tab__section-title">Fichiers les plus téléchargés</h3>
+            <div className="info-tab__compact-list">
+              {stats.topDownloadedFiles.slice(0, 5).map((file) => (
+                <div key={file.id} className="info-tab__compact-item">
+                  <span>{file.name.length > 20 ? file.name.slice(0, 20) + '...' : file.name}</span>
+                  <strong>{file.downloadCount} téléchargements</strong>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         {Object.keys(stats.fileExtensions).length > 0 && (
           <section className="info-tab__section">
             <h3 className="info-tab__section-title">Types de fichiers</h3>
@@ -191,7 +237,7 @@ const InfoTab = ({ poolId, onPoolDeleted, onPoolUpdated, isPublicView = false }:
 
         {Object.keys(stats.filesPerDay).length > 0 && (
           <section className="info-tab__section">
-            <h3 className="info-tab__section-title">Activité récente</h3>
+            <h3 className="info-tab__section-title">Fichiers ajoutés par jour</h3>
             <div className="info-tab__compact-list">
               {Object.entries(stats.filesPerDay)
                 .sort(([dateA], [dateB]) => dateB.localeCompare(dateA))
@@ -205,6 +251,84 @@ const InfoTab = ({ poolId, onPoolDeleted, onPoolUpdated, isPublicView = false }:
                     <strong>{count} fichier{count > 1 ? 's' : ''}</strong>
                   </div>
                 ))}
+            </div>
+          </section>
+        )}
+
+        {stats.viewsPerDay && Object.keys(stats.viewsPerDay).length > 0 && (
+          <section className="info-tab__section">
+            <h3 className="info-tab__section-title">Vues par jour</h3>
+            <div className="info-tab__compact-list">
+              {Object.entries(stats.viewsPerDay)
+                .sort(([dateA], [dateB]) => dateB.localeCompare(dateA))
+                .slice(0, 4)
+                .map(([date, count]) => (
+                  <div key={date} className="info-tab__compact-item">
+                    <span>{new Date(date).toLocaleDateString('fr-FR', { 
+                      day: 'numeric', 
+                      month: 'long' 
+                    })}</span>
+                    <strong>{count} vues</strong>
+                  </div>
+                ))}
+            </div>
+          </section>
+        )}
+
+        {stats.downloadsPerDay && Object.keys(stats.downloadsPerDay).length > 0 && (
+          <section className="info-tab__section">
+            <h3 className="info-tab__section-title">Téléchargements par jour</h3>
+            <div className="info-tab__compact-list">
+              {Object.entries(stats.downloadsPerDay)
+                .sort(([dateA], [dateB]) => dateB.localeCompare(dateA))
+                .slice(0, 4)
+                .map(([date, count]) => (
+                  <div key={date} className="info-tab__compact-item">
+                    <span>{new Date(date).toLocaleDateString('fr-FR', { 
+                      day: 'numeric', 
+                      month: 'long' 
+                    })}</span>
+                    <strong>{count} téléchargements</strong>
+                  </div>
+                ))}
+            </div>
+          </section>
+        )}
+
+        {stats.viewsByUploader && Object.keys(stats.viewsByUploader).length > 0 && (
+          <section className="info-tab__section">
+            <h3 className="info-tab__section-title">Vues par contributeur</h3>
+            <div className="info-tab__compact-list">
+              {Object.entries(stats.viewsByUploader)
+                .slice(0, 4)
+                .map(([userId, count]) => {
+                  const user = stats.members.find(u => String(u.id) === userId);
+                  return (
+                    <div key={userId} className="info-tab__compact-item">
+                      <span>{user ? user.firstName + ' ' + user.lastName : userId}</span>
+                      <strong>{count} vues</strong>
+                    </div>
+                  );
+                })}
+            </div>
+          </section>
+        )}
+
+        {stats.downloadsByUploader && Object.keys(stats.downloadsByUploader).length > 0 && (
+          <section className="info-tab__section">
+            <h3 className="info-tab__section-title">Téléchargements par contributeur</h3>
+            <div className="info-tab__compact-list">
+              {Object.entries(stats.downloadsByUploader)
+                .slice(0, 4)
+                .map(([userId, count]) => {
+                  const user = stats.members.find(u => String(u.id) === userId);
+                  return (
+                    <div key={userId} className="info-tab__compact-item">
+                      <span>{user ? user.firstName + ' ' + user.lastName : userId}</span>
+                      <strong>{count} téléchargements</strong>
+                    </div>
+                  );
+                })}
             </div>
           </section>
         )}
