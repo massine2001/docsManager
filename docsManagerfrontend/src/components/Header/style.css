@@ -55,7 +55,12 @@
 }
 
 /* bloc droite */
-.navbar-right{ display:flex;align-items:center; margin-left:auto; margin: 0.7rem auto; }
+.navbar-right{ 
+  gap: .75em;
+  display: flex;
+  align-items: center;
+  margin: .7rem 0 .7em auto;
+ }
 
 /* état utilisateur */
 .navbar-user{font-size:.9rem; color:var(--muted); font-weight:500; }
