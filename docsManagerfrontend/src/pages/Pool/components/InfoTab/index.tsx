@@ -295,44 +295,6 @@ const InfoTab = ({ poolId, onPoolDeleted, onPoolUpdated, isPublicView = false }:
           </section>
         )}
 
-        {stats.viewsByUploader && Object.keys(stats.viewsByUploader).length > 0 && (
-          <section className="info-tab__section">
-            <h3 className="info-tab__section-title">Vues par contributeur</h3>
-            <div className="info-tab__compact-list">
-              {Object.entries(stats.viewsByUploader)
-                .slice(0, 4)
-                .map(([userId, count]) => {
-                  const user = stats.members.find(u => String(u.id) === userId);
-                  return (
-                    <div key={userId} className="info-tab__compact-item">
-                      <span>{user ? user.firstName + ' ' + user.lastName : userId}</span>
-                      <strong>{count} vues</strong>
-                    </div>
-                  );
-                })}
-            </div>
-          </section>
-        )}
-
-        {stats.downloadsByUploader && Object.keys(stats.downloadsByUploader).length > 0 && (
-          <section className="info-tab__section">
-            <h3 className="info-tab__section-title">Téléchargements par contributeur</h3>
-            <div className="info-tab__compact-list">
-              {Object.entries(stats.downloadsByUploader)
-                .slice(0, 4)
-                .map(([userId, count]) => {
-                  const user = stats.members.find(u => String(u.id) === userId);
-                  return (
-                    <div key={userId} className="info-tab__compact-item">
-                      <span>{user ? user.firstName + ' ' + user.lastName : userId}</span>
-                      <strong>{count} téléchargements</strong>
-                    </div>
-                  );
-                })}
-            </div>
-          </section>
-        )}
-
         {stats.inactiveMembers.length > 0 && (
           <section className="info-tab__section">
             <h3 className="info-tab__section-title">Membres inactifs</h3>
