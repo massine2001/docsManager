@@ -8,6 +8,7 @@ import java.time.Instant;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "pool")
 public class Pool {
