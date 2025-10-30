@@ -20,7 +20,7 @@ interface PoolWithStats extends Pool {
 
 const Home = () => {
   const { toast, hideToast } = useToast();
-  const { user } = useAuth();
+  const { user, login } = useAuth();
   const [pools, setPools] = useState<PoolWithStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -106,7 +106,7 @@ const Home = () => {
               </div>
               <button
                 className="home-demo-cta"
-                onClick={() => window.location.href = '/login'}
+                onClick={login}
               >
                 Se connecter / S'inscrire
               </button>
@@ -143,7 +143,7 @@ const Home = () => {
           ) : (
             <div className="home-no-public-pools">
               <p>Aucun pool public disponible pour le moment.</p>
-              <button onClick={() => window.location.href = '/login'}>
+              <button onClick={login}>
                 Se connecter pour créer vos pools
               </button>
             </div>
