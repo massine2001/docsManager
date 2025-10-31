@@ -75,11 +75,13 @@ const InfoTab = ({ poolId, onPoolDeleted, onPoolUpdated, isPublicView = false }:
   return (
     <div className="info-tab">
       {isPublicView && (
-        <div className="info-tab__public-banner">
-          <span className="info-tab__public-icon">🎯</span>
-          <div>
-            <strong>Mode démonstration</strong>
-            <p>Vous consultez les statistiques d'un pool public. Les boutons d'action sont désactivés.</p>
+       <div className="files-tab__public-banner">
+          <div className="files-tab__public-content">
+            <span className="files-tab__public-icon">🎯</span>
+            <div>
+              <strong>Mode démonstration</strong>
+              <p>Vous consultez les statistiques d'un pool public. Les boutons d'action sont désactivés.</p>
+            </div>
           </div>
         </div>
       )}

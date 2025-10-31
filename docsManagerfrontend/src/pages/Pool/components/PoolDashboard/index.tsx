@@ -57,18 +57,18 @@ const PoolDashboard = ({
           Documents
         </button>
         <button
-          className={`pool-dashboard__tab ${activeTab === "edit" ? "pool-dashboard__tab--active" : ""}`}
-          onClick={() => setActiveTab("edit")}
-        >
-          Edition d'un document
-        </button>
-        <button
           className={`pool-dashboard__tab ${activeTab === "info" ? "pool-dashboard__tab--active" : ""}`}
           onClick={() => setActiveTab("info")}
         >
           Informations
         </button>
         <button
+          className={`pool-dashboard__tab ${activeTab === "edit" ? "pool-dashboard__tab--active" : ""}`}
+          onClick={() => setActiveTab("edit")}
+        >
+          Edition d'un document
+        </button>
+                <button
           className={`pool-dashboard__tab ${activeTab === "members" ? "pool-dashboard__tab--active" : ""}`}
           onClick={() => setActiveTab("members")}
         >

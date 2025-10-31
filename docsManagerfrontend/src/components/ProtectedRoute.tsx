@@ -17,7 +17,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         alignItems: 'center',
         minHeight: '100vh',
         fontSize: '18px',
-        color: '#667eea'
+        color: '#256cb9'
       }}>
         <div>Chargement...</div>
       </div>

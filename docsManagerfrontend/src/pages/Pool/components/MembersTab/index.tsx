@@ -144,11 +144,13 @@ const MembersTab = ({ poolId, isPublicView = false }: Props) => {
   return (
     <div className="members-tab">
       {isPublicView && (
-        <div className="members-tab__public-banner">
-          <span className="members-tab__public-icon">🎯</span>
-          <div>
-            <strong>Mode démonstration</strong>
-            <p>Vous consultez les membres d'un pool public. Les actions de modification sont désactivées.</p>
+        <div className="files-tab__public-banner">
+          <div className="files-tab__public-content">
+            <span className="files-tab__public-icon">🎯</span>
+            <div>
+              <strong>Mode démonstration</strong>
+              <p>Vous consultez les membres d'un pool public. Les actions de modification sont désactivées.</p>
+            </div>
           </div>
         </div>
       )}

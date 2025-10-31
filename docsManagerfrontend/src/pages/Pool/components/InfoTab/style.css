@@ -6,10 +6,24 @@
   overflow-y: auto;
   padding-right: 0.5rem;
 }
+.files-tab__public-banner {
+padding: 0.4rem; width: fit-content; background:#176ecb; border: 1px solid #0e3b6b; border-radius: 6px; margin-bottom: 1rem;
+}
+
+.files-tab__public-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: white;
+}
+
+.files-tab__public-icon {
+  font-size: 2rem;
+}
 
 /* Bannière publique */
 .info-tab__public-banner {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #256cb9;
   border-radius: 8px;
   padding: 1rem 1.5rem;
   margin-bottom: 1rem;

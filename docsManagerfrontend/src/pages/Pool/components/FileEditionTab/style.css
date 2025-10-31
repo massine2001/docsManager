@@ -365,6 +365,20 @@ input::placeholder, textarea::placeholder {
   color: #666;
   line-height: 1.5;
 }
+.files-tab__public-banner {
+padding: 0.4rem; width: fit-content; background:#176ecb; border: 1px solid #0e3b6b; border-radius: 6px; margin-bottom: 1rem;
+}
+
+.files-tab__public-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: white;
+}
+
+.files-tab__public-icon {
+  font-size: 2rem;
+}
 
 /* Custom File Input */
 .file-input-label {
@@ -372,7 +386,7 @@ input::placeholder, textarea::placeholder {
   align-items: center;
   gap: 0.5rem;
   padding: 0.7rem 1.2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #256cb9;
   color: white;
   border-radius: 6px;
   cursor: pointer;

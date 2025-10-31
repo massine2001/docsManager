@@ -10,7 +10,7 @@
 
 /* Bannière publique */
 .invitation-tab__public-banner {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #256cb9;
   border-radius: 8px;
   padding: 1rem 1.5rem;
   display: flex;
@@ -57,7 +57,7 @@
 .invitation-tab__header {
   text-align: center;
   padding: 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #256cb9;
   border-radius: 12px;
   color: white;
   margin-bottom: 0.5rem;
@@ -145,7 +145,7 @@
 
 .invitation-tab__input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #256cb9;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -215,7 +215,7 @@
 }
 
 .invitation-tab__email-chip:hover {
-  border-color: #667eea;
+  border-color: #256cb9;
   background: #f3f4ff;
 }
 
@@ -262,7 +262,7 @@
 
 .invitation-tab__textarea:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #256cb9;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -361,7 +361,7 @@
 }
 
 .invitation-tab__btn--primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #256cb9;
   color: white;
 }
 
@@ -400,11 +400,26 @@
 .invitation-tab__btn--success:active:not(:disabled) {
   transform: translateY(0);
 }
+.files-tab__public-banner {
+padding: 0.4rem; width: fit-content; background:#176ecb; border: 1px solid #0e3b6b; border-radius: 6px; margin-bottom: 1rem;
+}
+
+.files-tab__public-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: white;
+}
+
+.files-tab__public-icon {
+  font-size: 2rem;
+}
+
 
 .invitation-tab__btn-link {
   background: none;
   border: none;
-  color: #667eea;
+  color:#256cb9;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -481,7 +496,7 @@
   justify-content: space-between;
   padding: 1.5rem;
   border-bottom: 1px solid #e5e7eb;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #256cb9;
 }
 
 .send-modal__title {
@@ -559,7 +574,7 @@
 }
 
 .send-modal__option:hover {
-  border-color: #667eea;
+  border-color:#256cb9;
   background: #f9fafb;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);

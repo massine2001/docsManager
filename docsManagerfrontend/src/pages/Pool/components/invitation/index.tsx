@@ -82,11 +82,13 @@ const InvitationTab = ({ poolId, poolName, currentUserName, isPublicView = false
   return (
     <div className="invitation-tab">
       {isPublicView && (
-        <div className="invitation-tab__public-banner">
-          <span style={{ fontSize: '2rem' }}>🎯</span>
-          <div>
-            <strong>Mode démonstration</strong>
-            <p>Les invitations sont désactivées en mode public.</p>
+        <div className="files-tab__public-banner">
+          <div className="files-tab__public-content">
+            <span className="files-tab__public-icon">🎯</span>
+            <div>
+              <strong>Mode démonstration</strong>
+              <p>Les invitations sont désactivées en mode public.</p>
+            </div>
           </div>
         </div>
       )}

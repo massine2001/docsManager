@@ -1,7 +1,7 @@
 /* Join Page Container */
 .join-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #256cb9;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -93,7 +93,7 @@
   margin: 0 0 0.5rem 0;
   font-size: 2rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #256cb9;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -116,7 +116,7 @@
 }
 
 .join-page__email span {
-  color: #667eea;
+  color: #256cb9;
   font-weight: 600;
 }
 
@@ -166,7 +166,7 @@
 
 .join-page__input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #256cb9;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -226,7 +226,7 @@
 /* General Button */
 .join-page__btn {
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #256cb9;
   color: white;
   border: none;
   border-radius: 6px;

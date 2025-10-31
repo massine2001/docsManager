@@ -28,7 +28,7 @@
 
 .btn-edit {
   padding: 0.625rem 1.25rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #256cb9;
   color: white;
   border: none;
   border-radius: 8px;
@@ -82,7 +82,7 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #256cb9;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -132,7 +132,7 @@
 }
 
 .btn-save {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background:#256cb9;
   color: white;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }

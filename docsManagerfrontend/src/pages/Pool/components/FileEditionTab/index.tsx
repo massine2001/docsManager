@@ -15,25 +15,15 @@ const FileEditionTab = ({ poolId, isPublicView = false }: Props) => {
     return (
         <React.Fragment>
             {isPublicView && (
-                <div style={{
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    borderRadius: '8px',
-                    padding: '1rem 1.5rem',
-                    marginBottom: '1rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '1rem',
-                    color: 'white',
-                    boxShadow: '0 2px 8px rgba(102, 126, 234, 0.2)'
-                }}>
-                    <span style={{ fontSize: '2rem' }}>🎯</span>
-                    <div>
-                        <strong style={{ display: 'block', fontSize: '1.125rem', marginBottom: '0.25rem' }}>Mode démonstration</strong>
-                        <p style={{ margin: 0, fontSize: '0.875rem', opacity: 0.95, lineHeight: 1.4 }}>
-                            Les fonctions d'édition de documents sont désactivées en mode public.
-                        </p>
+                <div className="files-tab__public-banner">
+                    <div className="files-tab__public-content">
+                        <span className="files-tab__public-icon">🎯</span>
+                        <div>
+                        <strong>Mode démonstration</strong>
+                        <p>Les fonctions d'édition de documents sont désactivées en mode public.</p>
+                        </div>
                     </div>
-                </div>
+                    </div>
             )}
             <ModeSelector mode={mode} onModeChange={setMode} isPublicView={isPublicView} />  
             {mode === "add" && <AddDocument poolId={poolId} isPublicView={isPublicView} />}

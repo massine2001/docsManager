@@ -1,6 +1,6 @@
 .profil-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #256cb9;
   padding: 2rem;
 }
 
@@ -15,7 +15,7 @@
 
 /* Header du profil */
 .profil-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background:#256cb9;
   padding: 3rem 2rem;
   display: flex;
   align-items: center;
@@ -95,11 +95,11 @@
 
 .profil-tab:hover {
   background: rgba(102, 126, 234, 0.05);
-  color: #667eea;
+  color:#256cb9;
 }
 
 .profil-tab.active {
-  color: #667eea;
+  color:#256cb9;
   background: white;
 }
 
@@ -110,7 +110,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #667eea, #764ba2);
+  background: #256cb9;
   border-radius: 3px 3px 0 0;
 }
 
@@ -161,7 +161,7 @@
 
   .profil-tab.active::after {
     height: 0;
-    border-left: 4px solid #667eea;
+    border-left: 4px solid #256cb9;
     border-radius: 0;
     top: 0;
     bottom: 0;

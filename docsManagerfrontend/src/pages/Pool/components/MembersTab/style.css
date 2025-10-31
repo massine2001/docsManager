@@ -6,10 +6,25 @@
   max-height: 70vh;
   overflow-y: auto;
 }
+.files-tab__public-banner {
+padding: 0.4rem; width: fit-content; background:#176ecb; border: 1px solid #0e3b6b; border-radius: 6px; margin-bottom: 1rem;
+}
+
+.files-tab__public-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: white;
+}
+
+.files-tab__public-icon {
+  font-size: 2rem;
+}
+
 
 /* Bannière publique */
 .members-tab__public-banner {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background:#256cb9;
   border-radius: 8px;
   padding: 1rem 1.5rem;
   margin-bottom: 1rem;
@@ -165,7 +180,7 @@
 /* Add button */
 .members-tab__add-btn {
   padding: 0.6rem 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #256cb9;
   color: white;
   border: none;
   border-radius: 4px;
@@ -371,7 +386,7 @@
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid #e0e0e0;
   flex-shrink: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #256cb9;
 }
 
 .member-details__title {
@@ -429,7 +444,7 @@
   justify-content: center;
   width: 100px;
   height: 100px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #256cb9;
   border-radius: 50%;
   font-size: 2rem;
   font-weight: 700;
@@ -540,7 +555,7 @@
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid #e0e0e0;
   flex-shrink: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #256cb9;
 }
 
 .modal-header--danger {
@@ -638,7 +653,7 @@
   justify-content: center;
   width: 55px;
   height: 55px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background:#256cb9;
   border-radius: 50%;
   font-size: 1rem;
   font-weight: 700;
@@ -777,7 +792,7 @@
 }
 
 .modal-btn--primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #256cb9;
   color: white;
 }
 

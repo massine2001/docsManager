@@ -21,11 +21,8 @@
 
 /* Bannière démo pour les visiteurs non connectés */
 .home-demo-banner {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 12px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+padding: 0.8rem; width: fit-content; background:#176ecb; border: 1px solid #0e3b6b; border-radius: 6px; margin-bottom: 1rem;
+
 }
 
 .home-demo-content {
@@ -51,7 +48,7 @@
 
 .home-demo-cta {
     background: white;
-    color: #667eea;
+    color: #256cb9;
     border: none;
     padding: 0.875rem 1.75rem;
     border-radius: 8px;

@@ -25,9 +25,9 @@ export const fetchPublicPoolById = async (poolId: number): Promise<Pool | null> 
   }
 };
 
-export const fetchDemoPoolStats = async () =>
-  {
-    try {const response = await axiosClient.get<PoolStats>(`/public/demopoolstats`, {
+export const fetchDemoPoolStats = async () => {
+    try {
+      const response = await axiosClient.get<PoolStats>(`/public/demopoolstats`, {
       withCredentials: true
     });
     return response.data;}
